@@ -65,12 +65,40 @@ print(df.head().to_string)
 
 train = df.sample(frac=0.8, random_state=42)
 test = df.drop(train.index)
-print(train.index)
+
+print()
+print(train.describe())
+
+def make_model(inputs=3, num_units=12):
+  model = tf.keras.Sequential()
+  model.add(tf.keras.layers.Dense(num_units, input_dim=inputs, activation='relu'))
+  model.add(tf.keras.layers.Dense(1, activation='relu'))
+  model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
+  return model
+
+x_train = train[['long', 'punct', 'caps']]
+y_train = train[['spam']]
+print(y_train)
+print(y_train.shape)
+print(y_train['spam'].sum())
+print(type(y_train))
 
 
-print(df.shape)
-print(train.shape)
-print(test.shape)
+x_test = test[['long', 'punct', 'caps']]
+y_test = test[['spam']]
+
+model = make_model(inputs=3, num_units=12)
+print(type(model))
+model.fit(x_train, y_train, epochs=10, batch_size=10)
+
+model.evaluate(x_test, y_test)
+y_train_pred = model.predict(x_train)
+print(y_train_pred)
+print(tf.math.confusion_matrix(tf.constant(y_train.spam), y_train_pred))
+
+y_test_pred = model.predict_classes(x_test)
+print(y_test_pred)
+print(tf.math.confusion_matrix(tf.constant(y_test.spam), y_test_pred))
 
 
 
