@@ -20,5 +20,21 @@ tf.__version__
 lines = io.open('data/SMSSpamCollection').read().strip().split('\n')
 print(lines)
 print(type(lines))
+print(lines[0])
+
+data = []
+count = 0
+for e in lines:
+  label, text = e.split('\t')
+  if (label.lower().strip() =='spam'):
+    data.append((1, text.strip()))
+  else:
+    data.append((0, text.strip()))
+
+print(data)
+print(len(data))
+print(data[0][1])
+print(type(data[0]))
+
 
 
