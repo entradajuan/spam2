@@ -36,5 +36,23 @@ print(len(data))
 print(data[0][1])
 print(type(data[0]))
 
+import pandas as pd
+df = pd.DataFrame(data, columns=['Spam', 'Message'])
+print(df.head())
+print(df.shape)
+
+import re
+
+def message_length(x):
+  return len(x)
+
+def num_capitals(x):
+  _, count = re.subn(r'[A-Z]' , '', x)
+  return count
+
+
+cap_count = num_capitals('Adsd Aggggg')
+print(cap_count)
+
 
 
