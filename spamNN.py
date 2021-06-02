@@ -100,5 +100,27 @@ y_test_pred = model.predict_classes(x_test)
 print(y_test_pred)
 print(tf.math.confusion_matrix(tf.constant(y_test.spam), y_test_pred))
 
+import stanza
+#snlp = stanza.download('en') 
+en = stanza.Pipeline(lang='en', processors='tokenize')
 
 
+def word_counts(x, pipeline=en):
+  docu = pipeline(x)
+  count = sum([len(sen.tokens) for sen in docu.sentences])
+  return count
+
+df['words'] = df['text'].apply(word_counts)
+
+train['words'] = train['text'].apply(word_counts)
+test['words'] = test['text'].apply(word_counts)
+x_train = train[['text', 'long', 'caps', 'punct', 'words']]
+y_train = train[['spam']]
+
+x_test = test[['text', 'long', 'caps', 'punct', 'words']]
+y_test = test[['spam']]
+
+model = make_model(inputs=4)
+
+model.fit(x_train, y_train, epochs=20, batch_size=100)
+model.evaluate(x_test, y_test)
