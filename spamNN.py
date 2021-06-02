@@ -7,9 +7,12 @@ import io
 
 tf.__version__
 
-path_to_zip = tf.keras.utils.get_file("smsspamcollection.zip",
+#path_to_zip = tf.keras.utils.get_file("smsspamcollection.zip",
                   origin="https://archive.ics.uci.edu/ml/machine-learning-databases/00228/smsspamcollection.zip",
                   extract=True)
 
-print(path_to_zip)
-print(type(path_to_zip))
+#print(path_to_zip)
+#print(type(path_to_zip))
+
+#!unzip $path_to_zip -d data
+
