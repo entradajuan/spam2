@@ -37,7 +37,7 @@ print(data[0][1])
 print(type(data[0]))
 
 import pandas as pd
-df = pd.DataFrame(data, columns=['Spam', 'Message'])
+df = pd.DataFrame(data, columns=['spam', 'text'])
 print(df.head())
 print(df.shape)
 
@@ -50,9 +50,27 @@ def num_capitals(x):
   _, count = re.subn(r'[A-Z]' , '', x)
   return count
 
-
 cap_count = num_capitals('Adsd Aggggg')
 print(cap_count)
+
+def num_punctuation(x):
+  _, num =  re.subn(r'\W', '', x)
+  return num
+
+df['long'] = df['text'].apply(message_length)
+df['caps'] = df['text'].apply(num_capitals)
+df['punct'] = df['text'].apply(num_punctuation)
+
+print(df.head().to_string)
+
+train = df.sample(frac=0.8, random_state=42)
+test = df.drop(train.index)
+print(train.index)
+
+
+print(df.shape)
+print(train.shape)
+print(test.shape)
 
 
 
