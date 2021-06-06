@@ -1,10 +1,10 @@
 %tensorflow_version 2.x
-
 import tensorflow as tf
 #from tf.keras.models import Sequential
 #from tf.keras.layers import Dense
 import os
 import io
+import numpy as np
 
 tf.__version__
 
@@ -23,6 +23,7 @@ print(lines)
 print(type(lines))
 print(lines[0])
 
+
 data = []
 count = 0
 for e in lines:
@@ -36,6 +37,7 @@ print(data)
 print(len(data))
 print(data[0][1])
 print(type(data[0]))
+
 
 import pandas as pd
 df = pd.DataFrame(data, columns=['spam', 'text'])
@@ -84,12 +86,24 @@ print(y_train.shape)
 print(y_train['spam'].sum())
 print(type(y_train))
 
+# Pay attention, the 2 DataFrames do NOT share memo!!
+ser1 = train[['spam']]
+print(ser1.head)
+#print(ser1.iloc[0:3].index)
+print(ser1.loc[ser1.iloc[0:3].index, 'spam'])
+
+ser1.loc[ser1.iloc[0:3].index, 'spam'] = np.nan 
+
+print('train spam shape', train[['spam']].isna().sum())
+print('serie spam shape', ser1[['spam']].isna().sum())
+
 
 x_test = test[['long', 'punct', 'caps']]
 y_test = test[['spam']]
 
 model = make_model(inputs=3, num_units=12)
 print(type(model))
+
 model.fit(x_train, y_train, epochs=10, batch_size=10)
 
 model.evaluate(x_test, y_test)
@@ -101,8 +115,10 @@ y_test_pred = model.predict_classes(x_test)
 print(y_test_pred)
 print(tf.math.confusion_matrix(tf.constant(y_test.spam), y_test_pred))
 
+!pip install stanza
+
 import stanza
-#snlp = stanza.download('en') 
+snlp = stanza.download('en') 
 en = stanza.Pipeline(lang='en', processors='tokenize')
 
 
@@ -115,13 +131,16 @@ df['words'] = df['text'].apply(word_counts)
 
 train['words'] = train['text'].apply(word_counts)
 test['words'] = test['text'].apply(word_counts)
-x_train = train[['text', 'long', 'caps', 'punct', 'words']]
+x_train = train[[ 'long', 'caps', 'punct', 'words']]
 y_train = train[['spam']]
 
-x_test = test[['text', 'long', 'caps', 'punct', 'words']]
+x_test = test[[ 'long', 'caps', 'punct', 'words']]
 y_test = test[['spam']]
 
-model = make_model(inputs=4)
+#model = make_model(inputs=4)
+model = make_model(inputs=4, num_units=1200)
 
-model.fit(x_train, y_train, epochs=20, batch_size=100)
+model.fit(x_train, y_train, epochs=40, batch_size=100)
+
 model.evaluate(x_test, y_test)
+
